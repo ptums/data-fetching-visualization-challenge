@@ -3,6 +3,11 @@ import { motion } from "framer-motion";
 import classNames from "classnames";
 import { useQuery } from "react-query";
 
+interface ChartNumber {
+  num: number;
+  total: number;
+}
+
 function useGetNumbers() {
   return useQuery("numbers", async () => {
     const req = await fetch(
@@ -39,11 +44,11 @@ function sortNumbers(numbers: string) {
   return results;
 }
 
-function yHeight(numbers: any) {
+function yHeight(numbers: ChartNumber[]) {
   const findHighest = numbers.sort((a: any, b: any) =>
     a.total < b.total ? 1 : -1
   )[0];
-  const highest = Math.ceil(findHighest.total / 5) * 5;
+  const highest = Math.floor(findHighest.total / 5) * 5;
   const yH = [];
 
   for (let i = 1; i < highest; i++) {
@@ -58,7 +63,7 @@ function yHeight(numbers: any) {
 }
 
 function App() {
-  const { status, data, error, isFetching } = useGetNumbers();
+  const { data } = useGetNumbers();
 
   if (data) {
     const numbers = sortNumbers(data);
@@ -71,7 +76,7 @@ function App() {
             className="flex flex-col border-r-2"
             style={{ height: findYHeight.length * 80 }}
           >
-            {findYHeight.reverse().map((y, i) => (
+            {findYHeight.reverse().map((y: number) => (
               <div
                 key={y}
                 className="flex flex-col items-center"
@@ -97,18 +102,18 @@ function App() {
             style={{ height: 560 }}
             className="flex flex-row justify-between ml-16 w-full items-end"
           >
-            {numbers.map((x, index) => {
+            {numbers.map((x: ChartNumber, index: number) => {
               const barClass = classNames("drop-shadow-2xl rounded-t-lg w-8", {
-                "bg-green-400": index === 0,
-                "bg-yellow-400": index === 1,
-                "bg-blue-400": index === 2,
-                "bg-red-400": index === 3,
-                "bg-violet-400": index === 4,
-                "bg-orange-400": index === 5,
-                "bg-cyan-400": index === 6,
-                "bg-rose-400": index === 7,
-                "bg-fuchsia-400": index === 8,
-                "bg-amber-400": index === 9,
+                "bg-gradient-to-t from-green-600 to-green-400": index === 0,
+                "bg-gradient-to-t from-yellow-600 to-yellow-400": index === 1,
+                "bg-gradient-to-t from-blue-600 to-blue-400": index === 2,
+                "bg-gradient-to-t from-red-600 to-red-400": index === 3,
+                "bg-gradient-to-t from-violet-600 to-violet-400": index === 4,
+                "bg-gradient-to-t from-orange-600 to-orange-400": index === 5,
+                "bg-gradient-to-t from-cyan-600 to-cyan-400": index === 6,
+                "bg-gradient-to-t from-purple-600 to-purple-400": index === 7,
+                "bg-gradient-to-t from-emerald-600 to-emerald-400": index === 8,
+                "bg-gradient-to-t from-amber-600 to-amber-400": index === 9,
               });
               return (
                 <React.Fragment key={x?.num}>
@@ -122,7 +127,7 @@ function App() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
+                      transition={{ delay: 0.35 }}
                       className="text-center pt-2"
                     >
                       {x?.total}
